@@ -80,20 +80,45 @@ Commands:
 // MINE
 // ============================================
 bot.command('mine', (ctx) => {
-  const user = getUser(ctx.from.id);
+  const id = ctx.from.id;
 
-  const earned = user.hashPower * 0.25;
+  if (!users[id]) {
+    users[id] = {
+      balance: 0,
+      hashPower: 1,
+      level: 1,
+      xp: 0
+    };
+  }
 
-  user.balance += earned;
+  const user = users[id];
+
+  const mined = (Math.random() * 5 + 1) * user.hashPower;
+
+  user.balance += mined;
+  user.xp += 5;
+
+  // LEVEL SYSTEM
+  if (user.xp >= user.level * 100) {
+    user.level += 1;
+    user.hashPower += 2;
+
+    ctx.reply(`
+🎉 LEVEL UP!
+
+🏆 New Level: ${user.level}
+⚡ Hash Power Increased!
+    `);
+  }
 
   saveUsers();
 
   ctx.reply(`
-⛏ Mining Complete
+⛏ Mining Successful
 
-⚡ HashPower: ${user.hashPower}
-💰 Earned: ${earned.toFixed(2)} BLX
-💳 Balance: ${user.balance.toFixed(2)} BLX
+💰 Earned: ${mined.toFixed(2)} BLX
+⚡ Hash Power: ${user.hashPower}
+🏦 New Balance: ${user.balance.toFixed(2)} BLX
   `);
 });
 
