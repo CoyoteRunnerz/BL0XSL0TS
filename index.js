@@ -4,11 +4,13 @@ const fs = require('fs');
 // ============================================
 // BOT TOKEN
 // ============================================
+
 const BOT_TOKEN = process.env.BOT_TOKEN;
 
 // ============================================
 // CREATE BOT
 // ============================================
+
 const bot = new Telegraf(BOT_TOKEN);
 
 // ============================================
@@ -96,6 +98,11 @@ bot.command('mine', (ctx) => {
   const mined = (Math.random() * 5 + 1) * user.hashPower;
 
   user.balance += mined;
+
+if (!user.wallet) user.wallet = [];
+
+user.wallet.push(`+${mined.toFixed(2)} BLX mined`);
+
   user.xp += 5;
 
   // LEVEL SYSTEM
@@ -322,6 +329,7 @@ bot.command('send', (ctx) => {
 // ============================================
 
 bot.telegram.setMyCommands([
+{ command: 'wallet', description: 'View wallet ledger' },
 { command: 'leaderboard', description: 'Top BLX miners' },
   { command: 'start', description: 'Start BL0XSL0TS' },
   { command: 'mine', description: 'Mine BLX' },
@@ -378,6 +386,44 @@ bot.command('leaderboard', (ctx) => {
 
   ctx.reply(message);
 
+});
+bot.command('wallet', (ctx) => {
+
+  const id = ctx.from.id;
+
+  if (!users[id]) {
+    users[id] = {
+      balance: 0,
+      hashPower: 1,
+      level: 1,
+      xp: 0,
+      wallet: []
+    };
+  }
+
+  const user = users[id];
+
+  let walletLog = '📒 BL0X WALLET LOG\n\n';
+
+  if (!user.wallet || user.wallet.length === 0) {
+    walletLog += 'No transactions yet.';
+  } else {
+
+    user.wallet.slice(-10).reverse().forEach((tx) => {
+      walletLog += `💰 ${tx}\n`;
+    });
+
+  }
+
+  ctx.reply(walletLog);
+
+});
+process.on('uncaughtException', (err) => {
+  console.log('ERROR:', err);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.log('REJECTION:', err);
 });
 
 bot.launch();
