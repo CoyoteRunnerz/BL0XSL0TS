@@ -1,11 +1,11 @@
 {
   "123456789": {
-    "balance": 51.149999999999935,
+    "balance": 51.19999999999993,
     "hashPower": 1
   },
   "8667679794": {
     "username": "Coyote",
-    "balance": 71.09725076596429,
+    "balance": 71.14725076596429,
     "bank": 0,
     "hashPower": 1,
     "gpuLevel": 1,

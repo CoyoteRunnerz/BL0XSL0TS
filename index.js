@@ -322,6 +322,7 @@ bot.command('send', (ctx) => {
 // ============================================
 
 bot.telegram.setMyCommands([
+{ command: 'leaderboard', description: 'Top BLX miners' },
   { command: 'start', description: 'Start BL0XSL0TS' },
   { command: 'mine', description: 'Mine BLX' },
   { command: 'balance', description: 'View balance' },
@@ -358,6 +359,25 @@ bot.command('stats', (ctx) => {
 
 💱 Current BLX Price: $${blxPrice.toFixed(2)}
   `);
+});
+bot.command('leaderboard', (ctx) => {
+
+  const topUsers = Object.entries(users)
+    .sort((a, b) => b[1].balance - a[1].balance)
+    .slice(0, 10);
+
+  let message = '🏆 BL0X GLOBAL LEADERBOARD\n\n';
+
+  topUsers.forEach((user, index) => {
+
+    message += `${index + 1}. ID: ${user[0]}\n`;
+    message += `💰 ${user[1].balance.toFixed(2)} BLX\n`;
+    message += `⚡ HP: ${user[1].hashPower}\n\n`;
+
+  });
+
+  ctx.reply(message);
+
 });
 
 bot.launch();
