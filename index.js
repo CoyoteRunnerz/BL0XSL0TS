@@ -228,15 +228,24 @@ bot.command('buyasic', (ctx) => {
 // ============================================
 // PASSIVE MINING
 // ============================================
+
 setInterval(() => {
-  Object.keys(users).forEach((id) => {
-    users[id].balance += users[id].hashPower * 0.05;
-  });
+
+  for (const id in users) {
+
+    const user = users[id];
+
+    const passiveIncome = user.hashPower * 0.25;
+
+    user.balance += passiveIncome;
+
+  }
 
   saveUsers();
 
   console.log('⛏ Passive mining cycle completed');
-}, 300000);
+
+}, 60000);
 
 // ============================================
 // LAUNCH
