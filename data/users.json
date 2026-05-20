@@ -1,0 +1,40 @@
+[
+  {
+    "id": "user1",
+    "balance": null,
+    "hashPower": 12,
+    "level": 2
+  },
+  {
+    "id": "user2",
+    "balance": null,
+    "hashPower": 12,
+    "level": 2
+  },
+  {
+    "id": "user3",
+    "balance": null,
+    "hashPower": 12,
+    "level": 2
+  },
+  {
+    "id": "<id>",
+    "balance": null,
+    "hashPower": 10,
+    "level": 1
+  },
+  {
+    "id": "<id>node",
+    "balance": null,
+    "hashPower": 10,
+    "level": 1
+  },
+  {
+    "id": 8667679794,
+    "username": "Coyote",
+    "balance": 36.958619,
+    "hashPower": 14,
+    "level": 2,
+    "prestige": 0
+  }
+]

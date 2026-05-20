@@ -1,0 +1,21 @@
+{
+  "123456789": {
+    "balance": 50.49999999999997,
+    "hashPower": 1
+  },
+  "8667679794": {
+    "username": "Coyote",
+    "balance": 70.44725076596433,
+    "bank": 0,
+    "hashPower": 1,
+    "gpuLevel": 1,
+    "rigLevel": 1,
+    "securityLevel": 1,
+    "energy": 75.39999999999978,
+    "heat": 47,
+    "totalMined": 0.23338021926260966,
+    "lastMine": 1779215923299,
+    "syndicate": null,
+    "lastDaily": 1779250136739
+  }
+}
