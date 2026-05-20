@@ -4,7 +4,7 @@ const fs = require('fs');
 // ============================================
 // BOT TOKEN
 // ============================================
-const BOT_TOKEN = '8786690408:AAEjU0if9UqRKH-yHMB4ZKWK0JnKRU1dJGM';
+const BOT_TOKEN = process.env.BOT_TOKEN;
 
 // ============================================
 // CREATE BOT
