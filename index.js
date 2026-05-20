@@ -300,6 +300,32 @@ bot.telegram.setMyCommands([
 ]);
 
 console.log('🚀 BL0XSL0TS ONLINE');
+bot.command('stats', (ctx) => {
+  const id = ctx.from.id;
+
+  if (!users[id]) {
+    users[id] = {
+      balance: 0,
+      hashPower: 1,
+      level: 1,
+      xp: 0
+    };
+  }
+
+  const user = users[id];
+
+  ctx.reply(`
+📊 BL0X MINER STATS
+
+⚡ Hash Power: ${user.hashPower}
+💰 Balance: ${user.balance.toFixed(2)} BLX
+🏆 Level: ${user.level}
+✨ XP: ${user.xp}
+
+💱 Current BLX Price: $${blxPrice.toFixed(2)}
+  `);
+});
+
 bot.launch();
 
 console.log('🚀 BL0XSL0TS ONLINE');
