@@ -1,58 +1,64 @@
+require('dotenv').config();
 const { Telegraf } = require('telegraf');
 const fs = require('fs');
+const express = require('express');
 
-// ============================================
-// BOT TOKEN
-// ============================================
-
+// ========================================
+// COYOTE RUNNERZ x BL0XCHAIN
+// ========================================
 const BOT_TOKEN = process.env.BOT_TOKEN;
-
-// ============================================
-// CREATE BOT
-// ============================================
-
 const bot = new Telegraf(BOT_TOKEN);
 
-// ============================================
-// GLOBALS
-// ============================================
-let blxPrice = 1.00;
+// ========================================
+// WEB SERVER
+// ========================================
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-const gpuShop = {
-  buy3060: {
-    cost: 250,
-    power: 5
-  },
+app.get('/', (req, res) => {
+  res.send('🐺 COYOTE RUNNERZ // BL0XCHAIN ONLINE');
+});
 
-  buy4090: {
-    cost: 1000,
-    power: 20
-  },
+app.listen(PORT, () => {
+  console.log(`🌐 BL0XCHAIN NETWORK running on port ${PORT}`);
+});
 
-  buyasic: {
-    cost: 5000,
-    power: 100
-  }
-};
-
-// ============================================
+// ========================================
 // DATABASE
-// ============================================
+// ========================================
+const DB_FILE = './users.json';
+
 let users = {};
 
-if (fs.existsSync('./users.json')) {
-  users = JSON.parse(fs.readFileSync('./users.json'));
+if (fs.existsSync(DB_FILE)) {
+  try {
+    users = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+  } catch {
+    users = {};
+  }
 }
 
 function saveUsers() {
-  fs.writeFileSync('./users.json', JSON.stringify(users, null, 2));
+  fs.writeFileSync(DB_FILE, JSON.stringify(users, null, 2));
 }
 
 function getUser(id) {
+
+  id = String(id);
+
   if (!users[id]) {
+
     users[id] = {
       balance: 0,
-      hashPower: 1
+      bank: 0,
+      hashRate: 1,
+      level: 1,
+      xp: 0,
+      mined: 0,
+      rigs: 1,
+      energy: 100,
+      walletHistory: [],
+      lastMine: 0
     };
 
     saveUsers();
@@ -61,371 +67,679 @@ function getUser(id) {
   return users[id];
 }
 
-// ============================================
-// START COMMAND
-// ============================================
+// ========================================
+// BLX MARKET
+// ========================================
+let blxPrice = 1.00;
+
+setInterval(() => {
+
+  const change =
+    (Math.random() * 0.20) - 0.10;
+
+  blxPrice =
+    Math.max(0.10, blxPrice + change);
+
+  console.log(
+    `💱 BLX PRICE: $${blxPrice.toFixed(2)}`
+  );
+
+}, 60000);
+
+// ========================================
+// RIG MARKET
+// ========================================
+const rigs = {
+
+  starter: {
+    name: 'Starter GPU Rig',
+    cost: 250,
+    hash: 5
+  },
+
+  advanced: {
+    name: 'Advanced Mining Rig',
+    cost: 1000,
+    hash: 20
+  },
+
+  quantum: {
+    name: 'Quantum ASIC Node',
+    cost: 5000,
+    hash: 100
+  }
+
+};
+
+// ========================================
+// START
+// ========================================
 bot.start((ctx) => {
+
   getUser(ctx.from.id);
 
   ctx.reply(`
-🚀 Welcome to BL0XSL0TS
+🐺 COYOTE RUNNERZ
 
-Commands:
+⛏ BL0XCHAIN NETWORK
+Powered by •[BL🔐X]•SL0TS•
+
+🌐 Decentralized Mining
+🔐 Secure Vault Infrastructure
+🏦 Cold Storage Systems
+⚡ Blockchain Nodes Active
+
+━━━━━━━━━━━━━━━━━━
+
+COMMANDS
+
+⛏ MINING
 /mine
-/balance
+/hashrate
+/stats
+
+💰 WALLET
+/wallet
+/vault
+/bank
+/deposit amount
+/withdraw amount
+/send userid amount
+
+🌐 NETWORK
+/network
 /price
-/shop
+/pool
+/nodes
+
+🖥 RIGS
+/rigs
+/buystarter
+/buyadvanced
+/buyquantum
+
+📜 SYSTEM
+/help
   `);
+
 });
 
-// ============================================
-// MINE
-// ============================================
-bot.command('mine', (ctx) => {
-  const id = ctx.from.id;
+// ========================================
+// HELP
+// ========================================
+bot.command('help', (ctx) => {
 
-  if (!users[id]) {
-    users[id] = {
-      balance: 0,
-      hashPower: 1,
-      level: 1,
-      xp: 0
-    };
+  ctx.reply(`
+📜 BL0XCHAIN COMMANDS
+━━━━━━━━━━━━━━━━━━
+
+⛏ MINING
+/mine
+/hashrate
+/stats
+
+💰 WALLET
+/wallet
+/vault
+/bank
+/deposit amount
+/withdraw amount
+/send userid amount
+
+🌐 NETWORK
+/network
+/price
+/pool
+/nodes
+
+🖥 RIGS
+/rigs
+/buystarter
+/buyadvanced
+/buyquantum
+  `);
+
+});
+
+// ========================================
+// WALLET
+// ========================================
+bot.command('wallet', (ctx) => {
+
+  const user = getUser(ctx.from.id);
+
+  ctx.reply(`
+💰 BL0XCHAIN WALLET
+━━━━━━━━━━━━━━━━━━
+
+👤 ${ctx.from.first_name}
+
+💵 Wallet:
+${Number(user.balance).toFixed(2)} BLX
+
+🏦 Cold Storage:
+${Number(user.bank).toFixed(2)} BLX
+
+⚡ Hash Rate:
+${user.hashRate}
+
+🖥 Active Rigs:
+${user.rigs}
+
+🎖 Level:
+${user.level}
+
+⛏ Total Mined:
+${Number(user.mined).toFixed(2)} BLX
+  `);
+
+});
+
+// ========================================
+// VAULT
+// ========================================
+bot.command('vault', (ctx) => {
+
+  const user = getUser(ctx.from.id);
+
+  const totalAssets =
+    Number(user.balance) +
+    Number(user.bank);
+
+  ctx.reply(`
+🔐 BL0X VAULT
+━━━━━━━━━━━━━━━━━━
+
+🐺 COYOTE RUNNERZ SECURE STORAGE
+
+💵 Wallet:
+${Number(user.balance).toFixed(2)} BLX
+
+🏦 Cold Storage:
+${Number(user.bank).toFixed(2)} BLX
+
+💎 Total Assets:
+${totalAssets.toFixed(2)} BLX
+
+🔐 Encryption:
+ACTIVE
+
+🛡 Security:
+MILITARY GRADE
+  `);
+
+});
+
+// ========================================
+// MINE
+// ========================================
+bot.command('mine', (ctx) => {
+
+  const user = getUser(ctx.from.id);
+
+  const now = Date.now();
+  const cooldown = 10000;
+
+  if (now - user.lastMine < cooldown) {
+
+    const wait = Math.ceil(
+      (cooldown - (now - user.lastMine)) / 1000
+    );
+
+    return ctx.reply(
+      `⏳ Mining cooldown active.\nWait ${wait} seconds.`
+    );
   }
 
-  const user = users[id];
+  const reward = Number(
+    (
+      (Math.random() * 5)
+      + user.hashRate
+      + (user.level * 0.5)
+    ).toFixed(2)
+  );
 
-  const mined = (Math.random() * 5 + 1) * user.hashPower;
+  user.balance += reward;
+  user.mined += reward;
+  user.xp += 10;
+  user.lastMine = now;
 
-  user.balance += mined;
+  user.walletHistory.push(
+    `+${reward} BLX mined`
+  );
 
-if (!user.wallet) user.wallet = [];
-
-user.wallet.push(`+${mined.toFixed(2)} BLX mined`);
-
-  user.xp += 5;
-
-  // LEVEL SYSTEM
   if (user.xp >= user.level * 100) {
+
     user.level += 1;
-    user.hashPower += 2;
+    user.hashRate += 2;
+    user.energy += 10;
+    user.xp = 0;
 
     ctx.reply(`
-🎉 LEVEL UP!
+🚀 NODE LEVEL INCREASED
+━━━━━━━━━━━━━━━━━━
 
-🏆 New Level: ${user.level}
-⚡ Hash Power Increased!
+🎖 Level:
+${user.level}
+
+⚡ Hash Rate:
+${user.hashRate}
     `);
   }
 
   saveUsers();
 
   ctx.reply(`
-⛏ Mining Successful
+⛏ BLOCK SUCCESSFULLY MINED
+━━━━━━━━━━━━━━━━━━
 
-💰 Earned: ${mined.toFixed(2)} BLX
-⚡ Hash Power: ${user.hashPower}
-🏦 New Balance: ${user.balance.toFixed(2)} BLX
+💰 Reward:
+${reward} BLX
+
+💵 Wallet:
+${Number(user.balance).toFixed(2)} BLX
+
+⚡ Hash Rate:
+${user.hashRate}
+
+🖥 Active Rigs:
+${user.rigs}
   `);
+
 });
 
-// ============================================
-// BALANCE
-// ============================================
-bot.command('balance', (ctx) => {
+// ========================================
+// HASHRATE
+// ========================================
+bot.command('hashrate', (ctx) => {
+
   const user = getUser(ctx.from.id);
 
   ctx.reply(`
-💳 Wallet
+⚡ HASHRATE REPORT
+━━━━━━━━━━━━━━━━━━
 
-Balance: ${user.balance.toFixed(2)} BLX
-⚡ HashPower: ${user.hashPower}
+⚡ Current Hash Rate:
+${user.hashRate}
+
+🖥 Active Rigs:
+${user.rigs}
+
+🔋 Energy:
+${user.energy}%
+
+🎖 Level:
+${user.level}
   `);
+
 });
 
-// ============================================
+// ========================================
+// STATS
+// ========================================
+bot.command('stats', (ctx) => {
+
+  const user = getUser(ctx.from.id);
+
+  ctx.reply(`
+📊 NODE STATS
+━━━━━━━━━━━━━━━━━━
+
+⛏ Total Mined:
+${Number(user.mined).toFixed(2)} BLX
+
+💵 Wallet:
+${Number(user.balance).toFixed(2)} BLX
+
+🏦 Cold Storage:
+${Number(user.bank).toFixed(2)} BLX
+
+⚡ Hash Rate:
+${user.hashRate}
+
+🖥 Mining Rigs:
+${user.rigs}
+
+🎖 Level:
+${user.level}
+
+⭐ XP:
+${user.xp}/${user.level * 100}
+  `);
+
+});
+
+// ========================================
+// NETWORK
+// ========================================
+bot.command('network', (ctx) => {
+
+  ctx.reply(`
+🌐 COYOTE RUNNERZ NETWORK
+━━━━━━━━━━━━━━━━━━
+
+🟢 Status:
+ONLINE
+
+⛏ BL0XCHAIN:
+ACTIVE
+
+🔐 Encryption:
+ENABLED
+
+⚡ Blockchain Stability:
+OPTIMAL
+
+🌍 Active Miners:
+${Object.keys(users).length}
+
+💱 BLX Value:
+$${blxPrice.toFixed(2)}
+  `);
+
+});
+
+// ========================================
+// POOL
+// ========================================
+bot.command('pool', (ctx) => {
+
+  ctx.reply(`
+🌐 BL0XCHAIN MINING POOL
+━━━━━━━━━━━━━━━━━━
+
+🟢 Pool Status:
+ACTIVE
+
+⚡ Pool Hashing:
+STABLE
+
+🌍 Connected Miners:
+${Object.keys(users).length}
+
+🔗 Synchronization:
+ONLINE
+  `);
+
+});
+
+// ========================================
+// NODES
+// ========================================
+bot.command('nodes', (ctx) => {
+
+  ctx.reply(`
+🖥 BL0XCHAIN NODE GRID
+━━━━━━━━━━━━━━━━━━
+
+🟢 Core Nodes:
+ONLINE
+
+⚡ Validation Layer:
+ACTIVE
+
+🔐 Encryption Nodes:
+STABLE
+
+🌍 Distributed Infrastructure:
+CONNECTED
+  `);
+
+});
+
+// ========================================
 // PRICE
-// ============================================
-setInterval(() => {
-  const change = Math.random() * 0.2 - 0.1;
-
-  blxPrice += change;
-
-  if (blxPrice < 0.01) {
-    blxPrice = 0.01;
-  }
-
-  blxPrice = Math.round(blxPrice * 100) / 100;
-
-  console.log(`💱 BLX price updated: $${blxPrice}`);
-}, 60000);
-
+// ========================================
 bot.command('price', (ctx) => {
-  ctx.reply(`💱 Current BLX price: $${blxPrice.toFixed(2)}`);
-});
 
-// ============================================
-// SHOP
-// ============================================
-bot.command('shop', (ctx) => {
   ctx.reply(`
-🛒 BL0X GPU SHOP
+💱 BLX MARKET VALUE
+━━━━━━━━━━━━━━━━━━
 
-RTX 3060
-Cost: 250 BLX
-Command:
-/buy3060
-
-RTX 4090
-Cost: 1000 BLX
-Command:
-/buy4090
-
-ASIC Miner
-Cost: 5000 BLX
-Command:
-/buyasic
+1 BLX =
+$${blxPrice.toFixed(2)}
   `);
+
 });
 
-// ============================================
+// ========================================
+// RIG MARKET
+// ========================================
+bot.command('rigs', (ctx) => {
+
+  ctx.reply(`
+🖥 MINING RIG MARKET
+━━━━━━━━━━━━━━━━━━
+
+/buystarter
+Starter GPU Rig
+💰 250 BLX
+⚡ +5 Hash Rate
+
+/buyadvanced
+Advanced Mining Rig
+💰 1000 BLX
+⚡ +20 Hash Rate
+
+/buyquantum
+Quantum ASIC Node
+💰 5000 BLX
+⚡ +100 Hash Rate
+  `);
+
+});
+
+// ========================================
 // BUY FUNCTION
-// ============================================
-function buyGPU(ctx, item) {
+// ========================================
+function buyRig(ctx, rigKey) {
+
   const user = getUser(ctx.from.id);
 
-  const gpu = gpuShop[item];
+  const rig = rigs[rigKey];
 
-  if (!gpu) {
-    return ctx.reply('❌ Invalid GPU.');
+  if (user.balance < rig.cost) {
+
+    return ctx.reply(
+      `❌ Need ${rig.cost} BLX`
+    );
   }
 
-  if (user.balance < gpu.cost) {
-    return ctx.reply('❌ Not enough BLX.');
-  }
-
-  user.balance -= gpu.cost;
-  user.hashPower += gpu.power;
+  user.balance -= rig.cost;
+  user.hashRate += rig.hash;
+  user.rigs += 1;
 
   saveUsers();
 
   ctx.reply(`
-✅ Purchase Successful
+✅ RIG DEPLOYED
+━━━━━━━━━━━━━━━━━━
 
-⚡ Added HashPower: +${gpu.power}
-💰 Remaining Balance: ${user.balance.toFixed(2)} BLX
+🖥 ${rig.name}
+
+⚡ Hash Rate:
+${user.hashRate}
+
+🖥 Total Rigs:
+${user.rigs}
+
+💵 Wallet:
+${Number(user.balance).toFixed(2)} BLX
   `);
+
 }
 
-// ============================================
-// BUY COMMANDS
-// ============================================
-bot.command('buy3060', (ctx) => {
-  buyGPU(ctx, 'buy3060');
+bot.command('buystarter', (ctx) => {
+  buyRig(ctx, 'starter');
 });
 
-bot.command('buy4090', (ctx) => {
-  buyGPU(ctx, 'buy4090');
+bot.command('buyadvanced', (ctx) => {
+  buyRig(ctx, 'advanced');
 });
 
-bot.command('buyasic', (ctx) => {
-  buyGPU(ctx, 'buyasic');
+bot.command('buyquantum', (ctx) => {
+  buyRig(ctx, 'quantum');
 });
 
-// ============================================
-// PASSIVE MINING
-// ============================================
+// ========================================
+// BANK
+// ========================================
+bot.command('bank', (ctx) => {
 
-setInterval(() => {
-
-  for (const id in users) {
-
-    const user = users[id];
-
-    const passiveIncome = user.hashPower * 0.25;
-
-    user.balance += passiveIncome;
-
-  }
-
-  saveUsers();
-
-  console.log('⛏ Passive mining cycle completed');
-
-}, 60000);
-
-// ============================================
-// LAUNCH
-// ============================================
-bot.command('daily', (ctx) => {
   const user = getUser(ctx.from.id);
-
-  if (!user.lastDaily) {
-    user.lastDaily = 0;
-  }
-
-  const now = Date.now();
-
-  if (now - user.lastDaily < 86400000) {
-    return ctx.reply('⏳ Daily already claimed.');
-  }
-
-  user.lastDaily = now;
-  user.balance += 100;
-
-  saveUsers();
 
   ctx.reply(`
-🎁 Daily Reward Claimed
+🏦 BL0XCHAIN COLD STORAGE
+━━━━━━━━━━━━━━━━━━
 
-+100 BLX
-💰 New Balance: ${user.balance.toFixed(2)} BLX
+💵 Wallet:
+${Number(user.balance).toFixed(2)} BLX
+
+🔐 Secure Vault:
+${Number(user.bank).toFixed(2)} BLX
+
+COMMANDS
+
+/deposit amount
+/withdraw amount
   `);
+
 });
 
-// ============================================
-// LAUNCH
-// ============================================
-// ============================================
-// SEND BLX
-// ============================================
+// ========================================
+// DEPOSIT
+// ========================================
+bot.command('deposit', (ctx) => {
 
-bot.command('send', (ctx) => {
   const user = getUser(ctx.from.id);
 
-  const args = ctx.message.text.split(' ');
+  const amount = Number(
+    ctx.message.text.split(' ')[1]
+  );
 
-  if (args.length < 3) {
-    return ctx.reply('Usage: /send USER_ID AMOUNT');
-  }
-
-  const targetId = args[1];
-  const amount = parseFloat(args[2]);
-
-  if (isNaN(amount) || amount <= 0) {
-    return ctx.reply('❌ Invalid amount.');
+  if (!amount || amount <= 0) {
+    return ctx.reply(
+      'Use: /deposit amount'
+    );
   }
 
   if (user.balance < amount) {
-    return ctx.reply('❌ Not enough BLX.');
+    return ctx.reply(
+      '❌ Insufficient wallet balance'
+    );
   }
 
-  const targetUser = getUser(targetId);
-
   user.balance -= amount;
-  targetUser.balance += amount;
+  user.bank += amount;
 
   saveUsers();
 
   ctx.reply(`
-✅ Transfer Successful
+🏦 DEPOSIT SUCCESSFUL
+━━━━━━━━━━━━━━━━━━
 
-📤 Sent: ${amount.toFixed(2)} BLX
-💰 Remaining Balance: ${user.balance.toFixed(2)} BLX
+🔐 Vault:
+${Number(user.bank).toFixed(2)} BLX
   `);
+
 });
-// ============================================
-// START BOT
-// ============================================
 
-bot.telegram.setMyCommands([
-{ command: 'wallet', description: 'View wallet ledger' },
-{ command: 'leaderboard', description: 'Top BLX miners' },
-  { command: 'start', description: 'Start BL0XSL0TS' },
-  { command: 'mine', description: 'Mine BLX' },
-  { command: 'balance', description: 'View balance' },
-  { command: 'stats', description: 'View miner stats' },
-  { command: 'price', description: 'Current BLX price' },
-  { command: 'shop', description: 'Open GPU shop' },
-  { command: 'buy3060', description: 'Buy RTX 3060' },
-  { command: 'buy4090', description: 'Buy RTX 4090' },
-  { command: 'buyasic', description: 'Buy ASIC Miner' }
-]);
+// ========================================
+// WITHDRAW
+// ========================================
+bot.command('withdraw', (ctx) => {
 
-console.log('🚀 BL0XSL0TS ONLINE');
-bot.command('stats', (ctx) => {
-  const id = ctx.from.id;
+  const user = getUser(ctx.from.id);
 
-  if (!users[id]) {
-    users[id] = {
-      balance: 0,
-      hashPower: 1,
-      level: 1,
-      xp: 0
-    };
+  const amount = Number(
+    ctx.message.text.split(' ')[1]
+  );
+
+  if (!amount || amount <= 0) {
+    return ctx.reply(
+      'Use: /withdraw amount'
+    );
   }
 
-  const user = users[id];
+  if (user.bank < amount) {
+    return ctx.reply(
+      '❌ Insufficient vault balance'
+    );
+  }
+
+  user.bank -= amount;
+  user.balance += amount;
+
+  saveUsers();
 
   ctx.reply(`
-📊 BL0X MINER STATS
+🏦 WITHDRAWAL SUCCESSFUL
+━━━━━━━━━━━━━━━━━━
 
-⚡ Hash Power: ${user.hashPower}
-💰 Balance: ${user.balance.toFixed(2)} BLX
-🏆 Level: ${user.level}
-✨ XP: ${user.xp}
-
-💱 Current BLX Price: $${blxPrice.toFixed(2)}
+💵 Wallet:
+${Number(user.balance).toFixed(2)} BLX
   `);
-});
-bot.command('leaderboard', (ctx) => {
-
-  const topUsers = Object.entries(users)
-    .sort((a, b) => b[1].balance - a[1].balance)
-    .slice(0, 10);
-
-  let message = '🏆 BL0X GLOBAL LEADERBOARD\n\n';
-
-  topUsers.forEach((user, index) => {
-
-    message += `${index + 1}. ID: ${user[0]}\n`;
-    message += `💰 ${user[1].balance.toFixed(2)} BLX\n`;
-    message += `⚡ HP: ${user[1].hashPower}\n\n`;
-
-  });
-
-  ctx.reply(message);
 
 });
-bot.command('wallet', (ctx) => {
 
-  const id = ctx.from.id;
+// ========================================
+// SEND
+// ========================================
+bot.command('send', (ctx) => {
 
-  if (!users[id]) {
-    users[id] = {
-      balance: 0,
-      hashPower: 1,
-      level: 1,
-      xp: 0,
-      wallet: []
-    };
+  const sender = getUser(ctx.from.id);
+
+  const args = ctx.message.text.split(' ');
+
+  const receiverId = args[1];
+  const amount = Number(args[2]);
+
+  if (!receiverId || !amount) {
+
+    return ctx.reply(
+      'Use: /send userid amount'
+    );
   }
 
-  const user = users[id];
+  if (sender.balance < amount) {
 
-  let walletLog = '📒 BL0X WALLET LOG\n\n';
-
-  if (!user.wallet || user.wallet.length === 0) {
-    walletLog += 'No transactions yet.';
-  } else {
-
-    user.wallet.slice(-10).reverse().forEach((tx) => {
-      walletLog += `💰 ${tx}\n`;
-    });
-
+    return ctx.reply(
+      '❌ Insufficient BLX'
+    );
   }
 
-  ctx.reply(walletLog);
+  const receiver = getUser(receiverId);
+
+  sender.balance -= amount;
+  receiver.balance += amount;
+
+  saveUsers();
+
+  ctx.reply(`
+💸 TRANSFER COMPLETE
+━━━━━━━━━━━━━━━━━━
+
+Sent:
+${amount} BLX
+
+To:
+${receiverId}
+
+💵 Wallet:
+${Number(sender.balance).toFixed(2)} BLX
+  `);
 
 });
-process.on('uncaughtException', (err) => {
-  console.log('ERROR:', err);
-});
 
-process.on('unhandledRejection', (err) => {
-  console.log('REJECTION:', err);
-});
-
+// ========================================
+// LAUNCH
+// ========================================
 bot.launch();
 
-console.log('🚀 BL0XSL0TS ONLINE');
+console.log('🐺 COYOTE RUNNERZ // BL0XCHAIN ONLINE');
+
+// ========================================
+// SAFE STOP
+// ========================================
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));
