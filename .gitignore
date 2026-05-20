@@ -2,4 +2,5 @@
 users.json
 node_modules/
 *.log
+*.db
 
