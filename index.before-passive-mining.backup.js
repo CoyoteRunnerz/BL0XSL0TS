@@ -2,8 +2,8 @@ require('dotenv').config();
 
 const { Telegraf, Markup } = require('telegraf');
 const express = require('express');
-const db = require('./db/database');
-const store = require('./db/store');
+const fs = require('fs');
+const path = require('path');
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const ADMIN_ID = process.env.ADMIN_ID || '';
@@ -17,7 +17,33 @@ if (!BOT_TOKEN) {
 const bot = new Telegraf(BOT_TOKEN);
 const app = express();
 
+const DATA_FILE = path.join(__dirname, 'users.json');
+const DATA_DIR = path.join(__dirname, 'data');
+const LEDGER_FILE = path.join(DATA_DIR, 'ledger.json');
+
+let users = {};
+let ledger = [];
 let blxPrice = 0.4827;
+
+function ensureFiles() {
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
+  if (!fs.existsSync(DATA_FILE)) fs.writeFileSync(DATA_FILE, '{}');
+  if (!fs.existsSync(LEDGER_FILE)) fs.writeFileSync(LEDGER_FILE, '[]');
+}
+
+function loadData() {
+  ensureFiles();
+  users = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+  ledger = JSON.parse(fs.readFileSync(LEDGER_FILE, 'utf8'));
+}
+
+function saveUsers() {
+  fs.writeFileSync(DATA_FILE, JSON.stringify(users, null, 2));
+}
+
+function saveLedger() {
+  fs.writeFileSync(LEDGER_FILE, JSON.stringify(ledger, null, 2));
+}
 
 function money(n) {
   return Number(n || 0).toLocaleString(undefined, {
@@ -26,63 +52,43 @@ function money(n) {
   });
 }
 
-function walletId() {
-  return `BLX-${Math.floor(Math.random() * 999999999)}`;
-}
-
-async function profile(ctx) {
+function profile(ctx) {
   const id = String(ctx.from.id);
 
-  const found = await db.query(
-    'SELECT * FROM operators WHERE id = $1',
-    [id]
-  );
-
-  if (found.rows.length) {
-    const row = found.rows[0];
-
-    return {
-      operatorId: row.id,
-      name: row.name,
-      walletId: row.wallet_id,
-      balance: Number(row.wallet_balance),
-      vault: Number(row.vault_balance),
-      minedTotal: Number(row.mined_total),
-      hashPower: Number(row.hash_power),
-      securityLevel: row.security_level
+  if (!users[id]) {
+    users[id] = {
+      operatorId: id,
+      name: ctx.from.first_name || 'Coyote Runner',
+      walletId: `BLX-${Math.floor(Math.random() * 999999999)}`,
+      balance: 0,
+      vault: 0,
+      minedTotal: 0,
+      hashPower: 1,
+      securityLevel: 'STANDARD',
+      transfers: [],
+      createdAt: new Date().toISOString()
     };
+
+    saveUsers();
   }
 
-  const user = {
-    operatorId: id,
-    name: ctx.from.first_name || 'Coyote Runner',
-    walletId: walletId(),
-    balance: 0,
-    vault: 0,
-    minedTotal: 0,
-    hashPower: 1,
-    securityLevel: 'STANDARD'
-  };
-
-  await store.upsertOperator(user);
-  return user;
+  return users[id];
 }
 
-async function saveOperator(u) {
-  await store.upsertOperator(u);
-}
-
-async function recordLedger(type, operatorId, amount, meta = {}) {
+function recordLedger(type, operatorId, amount, meta = {}) {
   const tx = {
     id: `TX-${Date.now()}-${Math.floor(Math.random() * 99999)}`,
     type,
     operatorId,
     amount,
     meta,
-    status: 'RECORDED'
+    status: 'RECORDED',
+    time: new Date().toISOString()
   };
 
-  await store.insertLedger(tx);
+  ledger.push(tx);
+  saveLedger();
+
   return tx;
 }
 
@@ -95,8 +101,8 @@ function dashboardMenu() {
   ]);
 }
 
-bot.start(async (ctx) => {
-  const u = await profile(ctx);
+bot.start((ctx) => {
+  const u = profile(ctx);
 
   ctx.reply(`
 [BL🔐X]•SL0TS
@@ -113,8 +119,8 @@ Wallet ID: ${u.walletId}
 `, dashboardMenu());
 });
 
-bot.command('dashboard', async (ctx) => {
-  const u = await profile(ctx);
+bot.command('dashboard', (ctx) => {
+  const u = profile(ctx);
 
   ctx.reply(`
 📡 OPERATOR DASHBOARD
@@ -127,19 +133,19 @@ Hash-Power Allocation: ${u.hashPower.toFixed(2)} EH/s
 `, dashboardMenu());
 });
 
-bot.command('mine', async (ctx) => {
-  const u = await profile(ctx);
+bot.command('mine', (ctx) => {
+  const u = profile(ctx);
   const yieldAmount = Number((Math.random() * u.hashPower + 0.35).toFixed(4));
 
   u.balance += yieldAmount;
   u.minedTotal += yieldAmount;
 
-  await saveOperator(u);
-
-  const tx = await recordLedger('MINING_YIELD', u.operatorId, yieldAmount, {
+  const tx = recordLedger('MINING_YIELD', u.operatorId, yieldAmount, {
     walletId: u.walletId,
     layer: 'Coyote’z Burner'
   });
+
+  saveUsers();
 
   ctx.reply(`
 ⛏ MINING OPERATION COMPLETE
@@ -153,8 +159,8 @@ Status: CONFIRMED
 `);
 });
 
-bot.command('wallet', async (ctx) => {
-  const u = await profile(ctx);
+bot.command('wallet', (ctx) => {
+  const u = profile(ctx);
 
   ctx.reply(`
 💼 RUNNER’Z WALLET
@@ -172,8 +178,8 @@ Commands:
 `);
 });
 
-bot.command('vault', async (ctx) => {
-  const u = await profile(ctx);
+bot.command('vault', (ctx) => {
+  const u = profile(ctx);
 
   ctx.reply(`
 🏦 COYOTE’Z BANK SAFE
@@ -185,8 +191,8 @@ Withdrawal Access: ENABLED
 `);
 });
 
-bot.command('deposit', async (ctx) => {
-  const u = await profile(ctx);
+bot.command('deposit', (ctx) => {
+  const u = profile(ctx);
   const amount = Number(ctx.message.text.split(' ')[1]);
 
   if (!amount || amount <= 0) return ctx.reply('Use: /deposit 10');
@@ -195,12 +201,12 @@ bot.command('deposit', async (ctx) => {
   u.balance -= amount;
   u.vault += amount;
 
-  await saveOperator(u);
-
-  const tx = await recordLedger('VAULT_DEPOSIT', u.operatorId, amount, {
+  const tx = recordLedger('VAULT_DEPOSIT', u.operatorId, amount, {
     walletId: u.walletId,
     storage: 'Coyote’z Bank Safe'
   });
+
+  saveUsers();
 
   ctx.reply(`
 🏦 SECURED STORAGE DEPOSIT COMPLETE
@@ -212,8 +218,8 @@ Secured Storage: ${money(u.vault)} BLX
 `);
 });
 
-bot.command('withdraw', async (ctx) => {
-  const u = await profile(ctx);
+bot.command('withdraw', (ctx) => {
+  const u = profile(ctx);
   const amount = Number(ctx.message.text.split(' ')[1]);
 
   if (!amount || amount <= 0) return ctx.reply('Use: /withdraw 10');
@@ -222,12 +228,12 @@ bot.command('withdraw', async (ctx) => {
   u.vault -= amount;
   u.balance += amount;
 
-  await saveOperator(u);
-
-  const tx = await recordLedger('VAULT_WITHDRAWAL', u.operatorId, amount, {
+  const tx = recordLedger('VAULT_WITHDRAWAL', u.operatorId, amount, {
     walletId: u.walletId,
     storage: 'Coyote’z Bank Safe'
   });
+
+  saveUsers();
 
   ctx.reply(`
 💼 STORAGE RELEASE COMPLETE
@@ -239,8 +245,8 @@ Secured Storage: ${money(u.vault)} BLX
 `);
 });
 
-bot.command('transfer', async (ctx) => {
-  const u = await profile(ctx);
+bot.command('transfer', (ctx) => {
+  const u = profile(ctx);
   const parts = ctx.message.text.split(' ');
   const amount = Number(parts[1]);
   const target = parts[2] || 'external-operator';
@@ -250,12 +256,13 @@ bot.command('transfer', async (ctx) => {
 
   u.balance -= amount;
 
-  await saveOperator(u);
-
-  const tx = await recordLedger('OPERATOR_TRANSFER', u.operatorId, amount, {
+  const tx = recordLedger('OPERATOR_TRANSFER', u.operatorId, amount, {
     fromWallet: u.walletId,
     destination: target
   });
+
+  u.transfers.push(tx);
+  saveUsers();
 
   ctx.reply(`
 🔁 TRANSFER RECORD CREATED
@@ -268,28 +275,22 @@ Remaining Wallet Holdings: ${money(u.balance)} BLX
 `);
 });
 
-bot.command('ledger', async (ctx) => {
-  const u = await profile(ctx);
+bot.command('ledger', (ctx) => {
+  const u = profile(ctx);
 
-  const rows = await db.query(
-    `
-    SELECT id, type, amount, status, created_at
-    FROM ledger
-    WHERE operator_id = $1
-    ORDER BY created_at DESC
-    LIMIT 5
-    `,
-    [u.operatorId]
-  );
+  const records = ledger
+    .filter((tx) => tx.operatorId === u.operatorId)
+    .slice(-5)
+    .reverse();
 
-  if (!rows.rows.length) return ctx.reply('No ledger records found.');
+  if (!records.length) return ctx.reply('No ledger records found.');
 
-  const output = rows.rows.map((tx) => `
+  const output = records.map((tx) => `
 ${tx.id}
 Type: ${tx.type}
 Amount: ${money(tx.amount)} BLX
 Status: ${tx.status}
-Time: ${tx.created_at}
+Time: ${tx.time}
 `).join('\n');
 
   ctx.reply(`📒 RECENT LEDGER RECORDS\n${output}`);
@@ -306,7 +307,7 @@ Uptime: 99.98%
 Mining Operations Layer: Coyote’z Burner
 Secured Storage Layer: Coyote’z Bank Safe
 Wallet Layer: Runner’z Wallet
-Ledger Layer: POSTGRESQL ACTIVE
+Ledger Layer: ACTIVE
 `);
 });
 
@@ -319,7 +320,7 @@ Vault Encryption: ACTIVE
 Transfer Monitoring: ENABLED
 Operator Verification: ACTIVE
 Network Shield: ONLINE
-Ledger Integrity: POSTGRESQL ACTIVE
+Ledger Integrity: ACTIVE
 `);
 });
 
@@ -343,27 +344,23 @@ bot.command('status', (ctx) => {
 Coyote’z Burner: ACTIVE
 Coyote’z Bank Safe: SECURE
 Runner’z Wallet: ONLINE
-Ledger Layer: POSTGRESQL
+Ledger Layer: ACTIVE
 Cyber Security: ACTIVE
 Server Port: ${PORT}
 `);
 });
 
-bot.command('admin', async (ctx) => {
+bot.command('admin', (ctx) => {
   if (String(ctx.from.id) !== String(ADMIN_ID)) {
     return ctx.reply('Admin access denied.');
   }
 
-  const operators = await db.query('SELECT COUNT(*) FROM operators');
-  const ledger = await db.query('SELECT COUNT(*) FROM ledger');
-
   ctx.reply(`
 OWNER CONTROL PANEL
 
-Registered Operators: ${operators.rows[0].count}
-Ledger Records: ${ledger.rows[0].count}
+Registered Operators: ${Object.keys(users).length}
+Ledger Records: ${ledger.length}
 BLX Monitor Price: $${blxPrice.toFixed(4)}
-Database: POSTGRESQL
 System Status: ONLINE
 `);
 });
@@ -411,9 +408,7 @@ bot.telegram.setMyCommands([
   { command: 'market', description: 'View BLX market monitor' },
   { command: 'status', description: 'View system status' },
   { command: 'help', description: 'Open command center' }
-]).catch((err) => {
-  console.log('⚠️ Telegram command menu sync skipped:', err.code || err.message);
-});
+]);
 
 setInterval(() => {
   const change = (Math.random() - 0.45) * 0.015;
@@ -421,65 +416,25 @@ setInterval(() => {
   console.log(`💱 BLX monitor price updated: $${blxPrice}`);
 }, 60000);
 
-setInterval(async () => {
-  try {
-    const result = await db.query('SELECT * FROM operators');
-
-    for (const row of result.rows) {
-      const u = {
-        operatorId: row.id,
-        name: row.name,
-        walletId: row.wallet_id,
-        balance: Number(row.wallet_balance),
-        vault: Number(row.vault_balance),
-        minedTotal: Number(row.mined_total),
-        hashPower: Number(row.hash_power),
-        securityLevel: row.security_level
-      };
-
-      const passiveYield = Number((0.025 * u.hashPower).toFixed(4));
-
-      if (passiveYield > 0) {
-        u.balance += passiveYield;
-        u.minedTotal += passiveYield;
-
-        await saveOperator(u);
-
-        await recordLedger('PASSIVE_MINING_YIELD', u.operatorId, passiveYield, {
-          walletId: u.walletId,
-          layer: 'Coyote’z Burner',
-          mode: 'PASSIVE_OPERATION'
-        });
-      }
-    }
-
-    console.log('⛏ Passive mining operation completed');
-  } catch (err) {
-    console.log('⚠️ Passive mining skipped:', err.message);
-  }
-}, 300000);
-
 app.get('/', (req, res) => {
   res.send('[BL🔐X]•SL0TS // COYOTE’Z NETWORK ONLINE');
 });
 
-app.get('/status', async (req, res) => {
-  const operators = await db.query('SELECT COUNT(*) FROM operators');
-  const ledger = await db.query('SELECT COUNT(*) FROM ledger');
-
+app.get('/status', (req, res) => {
   res.json({
     platform: '[BL🔐X]•SL0TS',
     chain: '[BL🔐X]•CHAIN',
     miningLayer: 'Coyote’z Burner',
     bankSafe: 'SECURE',
     walletLayer: 'Runner’z Wallet',
-    database: 'POSTGRESQL',
-    operators: operators.rows[0].count,
-    ledgerRecords: ledger.rows[0].count,
+    ledgerRecords: ledger.length,
+    operators: Object.keys(users).length,
     blxMonitorPrice: blxPrice,
     uptime: process.uptime()
   });
 });
+
+loadData();
 
 bot.launch();
 
@@ -487,7 +442,7 @@ app.listen(PORT, () => {
   console.log('🐺 COYOTE RUNNERZ // BL0XCHAIN ONLINE');
   console.log('⛓ [BL🔐X]•CHAIN ACTIVE');
   console.log('🔥 Coyote’z Burner MINING OPERATIONS ONLINE');
-  console.log('📒 PostgreSQL ledger layer ACTIVE');
+  console.log('📒 Ledger layer ACTIVE');
   console.log(`🌐 [BL🔐X]•SL0TS running on port ${PORT}`);
 });
 

@@ -1,21 +1,14 @@
 {
-  "123456789": {
-    "balance": 51.649999999999906,
-    "hashPower": 1
-  },
   "8667679794": {
-    "username": "Coyote",
-    "balance": 71.59725076596426,
-    "bank": 0,
+    "operatorId": "8667679794",
+    "name": "Coyote",
+    "walletId": "BLX-594311436",
+    "balance": 5.352300000000003,
+    "vault": 0,
+    "minedTotal": 5.352300000000003,
     "hashPower": 1,
-    "gpuLevel": 1,
-    "rigLevel": 1,
-    "securityLevel": 1,
-    "energy": 75.39999999999978,
-    "heat": 47,
-    "totalMined": 0.23338021926260966,
-    "lastMine": 1779215923299,
-    "syndicate": null,
-    "lastDaily": 1779250136739
+    "securityLevel": "STANDARD",
+    "transfers": [],
+    "createdAt": "2026-05-22T18:09:31.465Z"
   }
 }

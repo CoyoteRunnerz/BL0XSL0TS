@@ -1,0 +1,387 @@
+[
+  {
+    "id": "TX-1779473401798-70541",
+    "type": "MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.8343,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T18:10:01.798Z"
+  },
+  {
+    "id": "TX-1779474927214-80810",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T18:35:27.214Z"
+  },
+  {
+    "id": "TX-1779475115468-9113",
+    "type": "MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.4505,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T18:38:35.468Z"
+  },
+  {
+    "id": "TX-1779475150354-75873",
+    "type": "MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 1.0897,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T18:39:10.354Z"
+  },
+  {
+    "id": "TX-1779475151276-99112",
+    "type": "MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 1.2892,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T18:39:11.276Z"
+  },
+  {
+    "id": "TX-1779475536284-33660",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T18:45:36.285Z"
+  },
+  {
+    "id": "TX-1779475839465-32273",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T18:50:39.467Z"
+  },
+  {
+    "id": "TX-1779476139466-2752",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T18:55:39.466Z"
+  },
+  {
+    "id": "TX-1779476439466-53736",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T19:00:39.466Z"
+  },
+  {
+    "id": "TX-1779476739467-34313",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T19:05:39.467Z"
+  },
+  {
+    "id": "TX-1779477039467-57894",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T19:10:39.467Z"
+  },
+  {
+    "id": "TX-1779478744762-74478",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T19:39:04.762Z"
+  },
+  {
+    "id": "TX-1779479044500-48302",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T19:44:04.501Z"
+  },
+  {
+    "id": "TX-1779479344501-43994",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T19:49:04.501Z"
+  },
+  {
+    "id": "TX-1779479644501-13145",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T19:54:04.501Z"
+  },
+  {
+    "id": "TX-1779479944502-7112",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T19:59:04.502Z"
+  },
+  {
+    "id": "TX-1779480244503-10295",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T20:04:04.503Z"
+  },
+  {
+    "id": "TX-1779480544503-43709",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T20:09:04.503Z"
+  },
+  {
+    "id": "TX-1779480844504-58882",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T20:14:04.504Z"
+  },
+  {
+    "id": "TX-1779481144505-78700",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T20:19:04.505Z"
+  },
+  {
+    "id": "TX-1779481444507-74532",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T20:24:04.507Z"
+  },
+  {
+    "id": "TX-1779481947872-78189",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T20:32:27.872Z"
+  },
+  {
+    "id": "TX-1779482247870-76127",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T20:37:27.870Z"
+  },
+  {
+    "id": "TX-1779482582442-91770",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T20:43:02.442Z"
+  },
+  {
+    "id": "TX-1779482895676-3569",
+    "type": "MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 1.0636,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T20:48:15.676Z"
+  },
+  {
+    "id": "TX-1779483162283-72209",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T20:52:42.283Z"
+  },
+  {
+    "id": "TX-1779483462282-22325",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T20:57:42.282Z"
+  },
+  {
+    "id": "TX-1779483762281-85444",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T21:02:42.281Z"
+  },
+  {
+    "id": "TX-1779484062282-5471",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T21:07:42.282Z"
+  },
+  {
+    "id": "TX-1779484362283-54143",
+    "type": "PASSIVE_MINING_YIELD",
+    "operatorId": "8667679794",
+    "amount": 0.025,
+    "meta": {
+      "walletId": "BLX-594311436",
+      "layer": "Coyote’z Burner",
+      "mode": "PASSIVE_OPERATION"
+    },
+    "status": "RECORDED",
+    "time": "2026-05-22T21:12:42.283Z"
+  }
+]
